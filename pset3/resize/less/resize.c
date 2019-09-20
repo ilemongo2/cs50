@@ -57,7 +57,7 @@ int main (int argc, char *argv[])
     int rows, cols, offset;
     rows = abs(bi.biHeight);
     cols = abs(bi.biWidth);
-    offset = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+    offset = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER); // first <offset> bytes of a .bmp file are just file info so I'm using this to know where raw data starts
     BYTE **cpy_array = (BYTE **)malloc(rows * sizeof(BYTE*));
 
     for (int i = 0; i < rows; i++){
@@ -92,13 +92,13 @@ int main (int argc, char *argv[])
 
     // Process data - copy file raw data to array, multiply and save new data into a new array
     cpy_fdata2array(inptr, offset, cpy_array, rows, cols);
-    //print_array(cpy_array, sizeof(RGBTRIPLE), rows, cols);
+    //print_array(cpy_array, sizeof(RGBTRIPLE), rows, cols); // for debugging only
     array_multiply(cpy_array, output_array, n, rows, cols);
 
      // Write new raw data to output file
     cpy_arraydata2f(outptr, offset, output_array, rows_out, cols_out);
-    //printf("\n \n Output Array: \n");
-    //print_array(output_array, sizeof(RGBTRIPLE), rows_out, cols_out);
+    //printf("\n \n Output Array: \n"); // debug
+    //print_array(output_array, sizeof(RGBTRIPLE), rows_out, cols_out); // debug only
 
     // Write file header and info header
     bf_out = bf;
@@ -142,7 +142,7 @@ int main (int argc, char *argv[])
 void skip_padding(FILE *fp, int elmnt_size, int num_elmnts){
     /** This function skips padding inside of a .bmp file
      * elmnt_size: size of each padding element in bytes, a padding element
-     * here is basically a RGBTRIPLE to be skipped
+     * here is basically a RGBTRIPLE of 0s to be skipped
      * num_elmnts: total number of elements including padding elements
      *
      */
@@ -154,7 +154,7 @@ void skip_padding(FILE *fp, int elmnt_size, int num_elmnts){
 void add_padding(FILE *fp, int elmnt_size, int num_elmnts){
 /** This function adds padding inside of a .bmp file
  * elmnt_size: size of each padding element in bytes, a padding element
- * here is basically a RGBTRIPLE to be added
+ * here is basically a RGBTRIPLE of 0s to be added
  * num_elmnts: total number of elements including padding elements
  *
  */
